@@ -1,110 +1,273 @@
-﻿using qcz.Dump;
+﻿using ProtoBuf;
+using qcz.Dump;
 using qcz.Util;
+using qczWikiStat.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace qczWikiStat
 {
-	class User
+	[ProtoContract]
+	public class User
 	{
-		private Dictionary<int, int> allEdits;
-		private Dictionary<int, int> periodEdits;
-		private List<DateTime> editDays;
-		private List<Right> rights;
+		[ProtoMember(1)]
+		public int Id { get; set; } = -1;
+		[ProtoMember(2)]
+		public string Name { get; private set; }
+		[ProtoMember(3)]
+		public UserType UserType { get; private set; }
 
-		public int AllDays =>
-			Convert.ToInt32(Math.Floor((LastEdit.Value.Date - FirstEdit.Value.Date).TotalDays));
-		public int AllEdits => allEdits.Count > 0 ? allEdits.Values.Sum() : 0;
-		public int PeriodEdits => periodEdits.Count > 0 ? periodEdits.Values.Sum() : 0;
-		public int ActiveDays => editDays.Count();
-		public DateTime? FirstEdit { get; set; }
-		public int Id { get; set; }
-		public DateTime? LastEdit { get; set; }
-		public double MeanEditsPerDay => AllDays == 0
-			? AllEdits
-			: Convert.ToDouble(AllEdits) / Convert.ToDouble(AllDays);
-		public string Name { get; set; }
+		[ProtoMember(10)]
+		private Dictionary<int, int> AllEditsByNamespace = new Dictionary<int, int>();
+		[ProtoMember(11)]
+		private Dictionary<int, int> AllRevertedEditsByNamespace = new Dictionary<int, int>();
 
-		public User(string userName)
+
+		[ProtoMember(12)]
+		private Dictionary<int, int> AllEditsBeforePeriodByNamespace = new Dictionary<int, int>();
+		[ProtoMember(13)]
+		private Dictionary<int, int> AllRevertedEditsBeforePeriodByNamespace = new Dictionary<int, int>();
+
+		[ProtoMember(14)]
+		private Dictionary<int, int> AllEditsInPeriodByNamespace = new Dictionary<int, int>();
+		[ProtoMember(15)]
+		private Dictionary<int, int> AllRevertedEditsInPeriodByNamespace = new Dictionary<int, int>();
+
+		[ProtoMember(20)]
+		private HashSet<DateTime> EditDays = new HashSet<DateTime>();
+
+		[ProtoMember(21)]
+		public DateTime? FirstEditTimestamp { get; set; } = null;
+		[ProtoMember(22)]
+		public DateTime? LastEditTimestamp { get; set; } = null;
+		public double MeanEditsPerDay => TotalDays == 0
+			? TotalEditCount
+			: Convert.ToDouble(TotalEditCount) / Convert.ToDouble(TotalDays);
+
+		public int TotalDays =>
+			Convert.ToInt32(Math.Floor((LastEditTimestamp.Value.Date - FirstEditTimestamp.Value.Date).TotalDays));
+		public int TotalEditCount => AllEditsByNamespace.Count > 0 ? AllEditsByNamespace.Values.Sum() : 0;
+		public int TotalRevertedEditCount => AllRevertedEditsByNamespace.Count > 0 ? AllRevertedEditsByNamespace.Values.Sum() : 0;
+		public double TotalRevertedEditPercentage => TotalEditCount > 0 ? (double)TotalRevertedEditCount / (double)TotalEditCount : 0;
+		public int TotalEditCountBeforePeriod => AllEditsBeforePeriodByNamespace.Count > 0 ? AllEditsBeforePeriodByNamespace.Values.Sum() : 0;
+		public int TotalRevertedEditCountBeforePeriod => AllRevertedEditsBeforePeriodByNamespace.Count > 0 ? AllRevertedEditsBeforePeriodByNamespace.Values.Sum() : 0;
+		public int TotalEditCountInPeriod => AllEditsInPeriodByNamespace.Count > 0 ? AllEditsInPeriodByNamespace.Values.Sum() : 0;
+		public int TotalRevertedEditCountInPeriod => AllRevertedEditsInPeriodByNamespace.Count > 0 ? AllRevertedEditsInPeriodByNamespace.Values.Sum() : 0;
+		public double TotalRevertedEditPercentageInPeriod => TotalEditCountInPeriod > 0 ? (double)TotalRevertedEditCountInPeriod / (double)TotalEditCountInPeriod : 0;
+		public int TotalActiveDays => EditDays.Count();
+
+		[ProtoMember(30)]
+		private HashSet<Right> Rights { get; set; } = new HashSet<Right>();
+		public bool IsBot => Rights.Contains(Right.Bot) || Rights.Contains(Right.UnflaggedBot);
+
+		[ProtoIgnore]
+		public ServiceRankRequirement RankBeforePeriod { get; set; }
+		[ProtoIgnore]
+		public ServiceRankRequirement RankAfterPeriod { get; set; }
+		[ProtoIgnore]
+		public double RankPosition { get; internal set; }
+		[ProtoIgnore]
+		public ServiceRankRequirement NextRank { get; set; }
+
+		private User()
 		{
-			allEdits = new Dictionary<int, int>();
-			periodEdits = new Dictionary<int, int>();
-			Name = userName;
-			editDays = new List<DateTime>();
-			Id = -1;
-			FirstEdit = null;
-			LastEdit = null;
-			rights = new List<Right>();
 		}
 
 		public void AddEditDay(DateTime dt)
 		{
-			if (!editDays.Contains(dt.Date))
-				editDays.Add(dt.Date);
+			EditDays.Add(dt.Date);
 		}
 		public void AddRights(List<Right> rights)
 		{
 			foreach (Right r in rights)
-				if (!this.rights.Contains(r))
-					this.rights.Add(r);
+			{
+				Rights.Add(r);
+			}
 		}
-		public void AddRights(Right r)
+
+		public void AddRight(Right r)
 		{
-			if (!this.rights.Contains(r))
-				this.rights.Add(r);
+			Rights.Add(r);
 		}
-		public int GetAllEditsByNs(int ns)
+
+		public int GetAllEditsByNamespace(int ns) => AllEditsByNamespace.ContainsKey(ns)
+			? AllEditsByNamespace[ns]
+			: 0;
+
+		public double GetAllEditPercentageByNamespace(int ns) => AllEditsByNamespace.ContainsKey(ns)
+			? (double)AllEditsByNamespace[ns] / (double)TotalEditCount
+			: 0.0;
+
+		public int GetEditsInPeriodByNamespace(int ns) => AllEditsInPeriodByNamespace.ContainsKey(ns)
+			? AllEditsInPeriodByNamespace[ns]
+			: 0;
+		
+		public double GetEditPercentageInPeriodByNamespace(int ns) => AllEditsInPeriodByNamespace.ContainsKey(ns)
+			? (double)AllEditsInPeriodByNamespace[ns] / (double)TotalEditCountInPeriod
+			: 0.0;
+
+		public void AddEdit(int ns, bool isBeforePeriod, bool isReverted)
 		{
-			return allEdits.ContainsKey(ns) ? allEdits[ns] : 0;
-		}
-		public double GetAllPcEditsByNs(int ns)
-		{
-			return allEdits.ContainsKey(ns) ? (double)allEdits[ns] / (double)AllEdits : 0.0;
-		}
-		public int GetPeriodEditsByNs(int ns)
-		{
-			return periodEdits.ContainsKey(ns) ? periodEdits[ns] : 0;
-		}
-		public double GetPeriodPcEditsByNs(int ns)
-		{
-			return periodEdits.ContainsKey(ns) ? (double)periodEdits[ns] / (double)PeriodEdits : 0.0;
-		}
-		public void IncAllEdits(int ns)
-		{
-			if (allEdits.ContainsKey(ns))
-				allEdits[ns]++;
+			if (AllEditsByNamespace.ContainsKey(ns))
+				AllEditsByNamespace[ns]++;
 			else
-				allEdits.Add(ns, 1);
-		}
-		public void IncCurEdits(int ns)
-		{
-			if (periodEdits.ContainsKey(ns))
-				periodEdits[ns]++;
+				AllEditsByNamespace.Add(ns, 1);
+
+			if (isReverted)
+			{
+				if (AllRevertedEditsByNamespace.ContainsKey(ns))
+					AllRevertedEditsByNamespace[ns]++;
+				else
+					AllRevertedEditsByNamespace.Add(ns, 1);
+			}
+
+			if (isBeforePeriod)
+			{
+				if (AllEditsBeforePeriodByNamespace.ContainsKey(ns))
+					AllEditsBeforePeriodByNamespace[ns]++;
+				else
+					AllEditsBeforePeriodByNamespace.Add(ns, 1);
+
+				if (isReverted)
+				{
+					if (AllRevertedEditsBeforePeriodByNamespace.ContainsKey(ns))
+						AllRevertedEditsBeforePeriodByNamespace[ns]++;
+					else
+						AllRevertedEditsBeforePeriodByNamespace.Add(ns, 1);
+				}
+			}
 			else
-				periodEdits.Add(ns, 1);
+			{
+				if (AllEditsInPeriodByNamespace.ContainsKey(ns))
+					AllEditsInPeriodByNamespace[ns]++;
+				else
+					AllEditsInPeriodByNamespace.Add(ns, 1);
+
+				if (isReverted)
+				{
+					if (AllRevertedEditsInPeriodByNamespace.ContainsKey(ns))
+						AllRevertedEditsInPeriodByNamespace[ns]++;
+					else
+						AllRevertedEditsInPeriodByNamespace.Add(ns, 1);
+				}
+			}
 		}
-		public bool HasRight(Right r)
+
+		public bool HasRight(Right r) => Rights.Contains(r);
+
+		public int GetActiveDaysBeforePeriod(DateTime? start) => start.HasValue
+			? EditDays.Count(editDay => editDay < start.Value)
+			: 0;
+
+		public int GetActiveDaysInPeriod(DateTime? start, DateTime end) => start.HasValue
+			? EditDays.Count(editDay => editDay >= start.Value && editDay <= end)
+			: 0;
+
+		public double GetMeanEditsPerDayInPeriod(DateTime periodStart, DateTime periodEnd) => FirstEditTimestamp.HasValue
+			? (double)TotalEditCountInPeriod / (double)(periodEnd.DaysBetween(periodStart))
+			: 0.0;
+
+		public void Merge(User otherUser)
 		{
-			foreach(Right rx in rights)
-				if (rx == r)
-					return true;
-			return false;
+			if (otherUser.AllEditsByNamespace != null)
+			{
+				foreach (var allEditKvp in otherUser.AllEditsByNamespace)
+				{
+					if (AllEditsByNamespace.ContainsKey(allEditKvp.Key))
+						AllEditsByNamespace[allEditKvp.Key] += allEditKvp.Value;
+					else
+						AllEditsByNamespace[allEditKvp.Key] = allEditKvp.Value;
+				}
+			}
+
+			if (otherUser.AllRevertedEditsByNamespace != null)
+			{
+				foreach (var allRevEditKvp in otherUser.AllRevertedEditsByNamespace)
+				{
+					if (AllRevertedEditsByNamespace.ContainsKey(allRevEditKvp.Key))
+						AllRevertedEditsByNamespace[allRevEditKvp.Key] += allRevEditKvp.Value;
+					else
+						AllRevertedEditsByNamespace[allRevEditKvp.Key] = allRevEditKvp.Value;
+				}
+			}
+
+			if (otherUser.AllEditsBeforePeriodByNamespace != null)
+			{
+				foreach (var allBefPeriodEditKvp in otherUser.AllEditsBeforePeriodByNamespace)
+				{
+					if (AllEditsBeforePeriodByNamespace.ContainsKey(allBefPeriodEditKvp.Key))
+						AllEditsBeforePeriodByNamespace[allBefPeriodEditKvp.Key] += allBefPeriodEditKvp.Value;
+					else
+						AllEditsBeforePeriodByNamespace[allBefPeriodEditKvp.Key] = allBefPeriodEditKvp.Value;
+				}
+			}
+
+			if (otherUser.AllRevertedEditsBeforePeriodByNamespace != null)
+			{
+				foreach (var allRevBefPeriodEditKvp in otherUser.AllRevertedEditsBeforePeriodByNamespace)
+				{
+					if (AllRevertedEditsBeforePeriodByNamespace.ContainsKey(allRevBefPeriodEditKvp.Key))
+						AllRevertedEditsBeforePeriodByNamespace[allRevBefPeriodEditKvp.Key] += allRevBefPeriodEditKvp.Value;
+					else
+						AllRevertedEditsBeforePeriodByNamespace[allRevBefPeriodEditKvp.Key] = allRevBefPeriodEditKvp.Value;
+				}
+			}
+
+			if (otherUser.AllEditsInPeriodByNamespace != null)
+			{
+				foreach (var allInPeriodEditKvp in otherUser.AllEditsInPeriodByNamespace)
+				{
+					if (AllEditsInPeriodByNamespace.ContainsKey(allInPeriodEditKvp.Key))
+						AllEditsInPeriodByNamespace[allInPeriodEditKvp.Key] += allInPeriodEditKvp.Value;
+					else
+						AllEditsInPeriodByNamespace[allInPeriodEditKvp.Key] = allInPeriodEditKvp.Value;
+				}
+			}
+
+			if (otherUser.AllRevertedEditsInPeriodByNamespace != null)
+			{
+				foreach (var allRevInPeriodEditKvp in otherUser.AllRevertedEditsInPeriodByNamespace)
+				{
+					if (AllRevertedEditsInPeriodByNamespace.ContainsKey(allRevInPeriodEditKvp.Key))
+						AllRevertedEditsInPeriodByNamespace[allRevInPeriodEditKvp.Key] += allRevInPeriodEditKvp.Value;
+					else
+						AllRevertedEditsInPeriodByNamespace[allRevInPeriodEditKvp.Key] = allRevInPeriodEditKvp.Value;
+				}
+			}
+
+			if (otherUser.EditDays != null)
+			{
+				foreach (var editDay in otherUser.EditDays)
+				{
+					EditDays.Add(editDay);
+				}
+			}
+
+			if (otherUser.FirstEditTimestamp.HasValue)
+			{
+				if (FirstEditTimestamp.HasValue == false)
+					FirstEditTimestamp = otherUser.FirstEditTimestamp;
+				else if (FirstEditTimestamp > otherUser.FirstEditTimestamp)
+					FirstEditTimestamp = otherUser.FirstEditTimestamp;
+			}
+
+			if (otherUser.LastEditTimestamp.HasValue)
+			{
+				if (LastEditTimestamp.HasValue == false)
+					LastEditTimestamp = otherUser.LastEditTimestamp;
+				else if (LastEditTimestamp < otherUser.LastEditTimestamp)
+					LastEditTimestamp = otherUser.LastEditTimestamp;
+			}
 		}
-		public int PeriodActiveDays(DateTime? start, DateTime end)
+
+		public static User CreateFromDumpArticleRevision(DumpArticleRevision rev)
 		{
-			if (!start.HasValue) return 0;
-			int ret = 0;
-			foreach (DateTime d in editDays)
-				if (d >=
-					start.Value && d <= end)
-					ret++;
-			return ret;
-		}
-		public double PeriodMeanEditsPerDay(DateTime periodStart, DateTime periodEnd)
-		{
-			if (!FirstEdit.HasValue) return 0.0;
-			return (double)PeriodEdits / (double)(periodEnd.DaysBetween(periodStart));
+			return new User()
+			{
+				UserType = rev.UserType,
+				Name = rev.UserUniqueIdentifier
+			};
 		}
 	}
 }

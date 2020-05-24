@@ -70,7 +70,7 @@ namespace qcz.Dump.StubMetaHistory
 								if (xmlReader.Name == "revision")
 								{
 									state = DumpReaderState.PageDataReading;
-									curArticle.AddRevision(curRevision);
+									curArticle.Revisions.Add(curRevision);
 									curRevision = null;
 								}
 								break;
@@ -79,16 +79,27 @@ namespace qcz.Dump.StubMetaHistory
 								{
 									case "id":
 										xmlReader.Read();
-										curRevision.Id = Convert.ToInt32(xmlReader.Value);
+										curRevision.RevisionId = Convert.ToInt32(xmlReader.Value);
 										break;
 									case "timestamp":
 										xmlReader.Read();
-										curRevision.TimeStamp = DateTime.ParseExact(xmlReader.Value,
+										curRevision.Timestamp = DateTime.ParseExact(xmlReader.Value,
 											"yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
 										break;
 									case "contributor":
 										if (xmlReader.IsEmptyElement == false)
 											state = DumpReaderState.UserDataReading;
+										break;
+									case "comment":
+										xmlReader.Read();
+										curRevision.RevisionComment = xmlReader.Value;
+										break;
+									case "sha1":
+										if (xmlReader.IsEmptyElement == false)
+										{
+											xmlReader.Read();
+											curRevision.ContentHash = xmlReader.Value;
+										}
 										break;
 								}
 								break;
@@ -109,9 +120,14 @@ namespace qcz.Dump.StubMetaHistory
 										curRevision.UserId = Convert.ToInt32(xmlReader.Value);
 										break;
 									case "username":
+										xmlReader.Read();
+										curRevision.UserType = UserType.Registered;
+										curRevision.UserName = xmlReader.Value;
+										break;
 									case "ip":
 										xmlReader.Read();
-										curRevision.UserName = xmlReader.Value;
+										curRevision.UserType = UserType.Anonymous;
+										curRevision.UserIpAddress = xmlReader.Value;
 										break;
 								}
 								break;

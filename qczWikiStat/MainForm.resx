@@ -123,22 +123,10 @@
   <metadata name="saveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>446, 17</value>
   </metadata>
-  <data name="textBox1.Text" xml:space="preserve">
-    <value>&lt;if:startDate&gt;Az adott időszakban (%period%) a magyar Wikipédiában átlagosan napi %periodMeanEdits% szerkesztés történt, botokkal együtt pedig %periodActiveUsers% regisztrált felhasználó szerkesztett.
-
-A listában szereplő %usersInList% szerkesztő összesen %allEditsInPeriodByUsersInList% szerkesztést tett, ami szerkesztőnként átlagosan %allEditsInPeriodByUsersInList% szerkesztést jelent. Ez a magyar Wikipédia %allEditsInPeriod% szerkesztésének %userEditsInListPercent%-a.&lt;/if&gt;</value>
+  <data name="createCache.Text" xml:space="preserve">
+    <value>Adatok gyorsítótárazása: az ugyanarra az időszakra készített statisztikákhoz egy összefoglaló adatokat tartalmazó fájl készítése, így a későbbiekben nincs szükség a hatalmas, több gigabájtos XML-fájl ismételt beolvasására.</value>
   </data>
-  <data name="textBox2.Text" xml:space="preserve">
-    <value>Mindig használható változók:
-%usersInList% - A listában szereplő szerkesztők száma
-
-Kezdődátum megadása esetén használható:
-%period% - A megadott időszak
-%periodMeanEditsPerDay% - Napi átlagos szerkesztésszám a megadott időszakban
-%periodActiveUsers% - Aktív szerkesztők száma a megadott időszakban
-%allEditsInPeriod% - Az időszakban végzett összes szerkesztés száma
-%allListedUserEditsInPeriod% - A listában szereplő aktív szerkesztők által végzett összes szerkesztés
-%listedserEditsPercent% - A listában szereplő aktív szerkesztők által végzett összes szerkesztés
-</value>
-  </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>50</value>
+  </metadata>
 </root>

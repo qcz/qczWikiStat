@@ -16,7 +16,6 @@ namespace qcz.Dump
 		protected bool needRewind;
 		protected FileStream fs;
 		protected GZipInputStream gzStream;
-		protected XmlTextReader textReader;
 		protected XmlReader xmlReader;
 		protected Dictionary<int, string> namespaces;
 		private static XmlReaderSettings readerSettings = new XmlReaderSettings()
