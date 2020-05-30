@@ -22,6 +22,7 @@ namespace qczWikiStat
 	public partial class MainForm : Form
 	{
 		private const string NICE_DATETIME_FORMAT_STRING = "yyyy. MMMM d.";
+		private const string NICE_DATETIME_FORMAT_STRING_WITHOUT_DOT = "yyyy. MMMM d";
 		private static CultureInfo hungarianCulture = CultureInfo.GetCultureInfo("hu-HU");
 
 		private StubMetaHistoryDumpReader smhDump = null;
@@ -40,7 +41,8 @@ namespace qczWikiStat
 		private List<int> selectedAllPercentNamespaces;
 		private List<int> selectedPeriodPercentNamespaces;
 
-		private string doubleFormat = "#,0.00";
+		private string doubleFormat = "#,0.##";
+		private string doubleFormatWithoutSpaces = "0.##";
 		private string percentFormat = "0.##%";
 
 		public string StubMetHistoryDumpFilePath { get; private set; }
@@ -511,7 +513,7 @@ namespace qczWikiStat
 
 					foreach (DumpArticleRevision articleRev in article.Revisions)
 					{
-						// az anonok és jövőbeli események kihagyása
+						// Jövőbeli események kihagyása
 						if (articleRev.Timestamp.Value.Date > statisticsData.PeriodEndDate.Date)
 							continue;
 						if (articleRev.Timestamp.Value < statisticsData.FirstEditInWiki)
@@ -586,12 +588,17 @@ namespace qczWikiStat
 		{
 			DateTime? start = null;
 			if (startDateCheckBox.Checked) start = startDatePicker.Value;
-			doubleFormat = "0";
+			doubleFormat = "#,0";
+			doubleFormatWithoutSpaces = "0";
 			if (doubleCountBox.Value > 0)
 			{
 				doubleFormat += ".";
+				doubleFormatWithoutSpaces += ".";
 				for (int i = 0; i < doubleCountBox.Value; i++)
+				{
 					doubleFormat += showDoubleZerosCheckBox.Checked ? "#" : "0";
+					doubleFormatWithoutSpaces += showDoubleZerosCheckBox.Checked ? "#" : "0";
+				}
 			}
 			percentFormat = "0.";
 			for (int i = 0; i < percentCountBox.Value; i++)
@@ -713,7 +720,7 @@ namespace qczWikiStat
 						.Select(u => new OrderedItem() { UserId = u.Name, Key = u.RankPosition });
 					break;
 				case "firstedit":
-					keylist = baseUserList.SmartOrderByDescending(user => user.FirstEditTimestamp.Value)
+					keylist = baseUserList.SmartOrderBy(user => user.FirstEditTimestamp.Value)
 						.Select(user => new OrderedItem() { UserId = user.Name, Key = user.FirstEditTimestamp.Value });
 					break;
 				case "lastedit":
@@ -806,7 +813,7 @@ namespace qczWikiStat
 
 						tw.WriteLine(
 							$"Az adott időszakban ({startDateDisplayed}–{endDateDisplayed}) " +
-							$"a magyar Wikipédiában eddig átlagosan napi {DoubleToHungarifiedNumberString(dailyAverageEdits)} szerkesztés történt. " +
+							$"a magyar Wikipédiában átlagosan napi {DoubleToHungarifiedNumberString(dailyAverageEdits)} szerkesztés történt. " +
 							$"{LongToHungarifiedNumberString(statisticsData.AllRegisteredUsersInPeriod)} regisztrált szerkesztő {LongToHungarifiedNumberString(statisticsData.AllRegisteredUserEditsInPeriod)} szerkesztést, " +
 							$"{LongToHungarifiedNumberString(statisticsData.AllBotUsersInPeriod)} bot {LongToHungarifiedNumberString(statisticsData.AllBotUserEditsInPeriod)} szerkesztést és " +
 							$"{LongToHungarifiedNumberString(statisticsData.AllNonRegisteredUsersInPeriod)} nem regisztrált szerkesztő {LongToHungarifiedNumberString(statisticsData.AllNonRegisteredUserEditsInPeriod)} szerkesztést végzett.\n"
@@ -1123,12 +1130,16 @@ namespace qczWikiStat
 
 		private string LongToHungarifiedNumberString(long number)
 		{
+			if (number < 10000)
+				return number.ToString("0", hungarianCulture);
+
 			return number.ToString("#,0", hungarianCulture).Replace(" ", "&nbsp;");
 		}
 
 		private string DoubleToHungarifiedNumberString(double number)
 		{
-			return number.ToString(doubleFormat, hungarianCulture).Replace(" ", "&nbsp;");
+			return number.ToString(number < 10000 ? doubleFormatWithoutSpaces : doubleFormat, hungarianCulture)
+				.Replace(" ", "&nbsp;");
 		}
 
 		private void GenerateFooter(TextWriter tw)
@@ -1148,7 +1159,7 @@ namespace qczWikiStat
 			
 			if (dumpDate != DateTime.MinValue)
 			{
-				var dumpDateDisplayed = dumpDate.ToString(NICE_DATETIME_FORMAT_STRING, hungarianCulture);
+				var dumpDateDisplayed = dumpDate.ToString(NICE_DATETIME_FORMAT_STRING_WITHOUT_DOT, hungarianCulture);
 
 				footerIntro = $"\n\nEz a statisztika a {dumpDateDisplayed}-i adatbázisdump " +
 					$"<tt>{Path.GetFileName(StubMetHistoryDumpFilePath)}</tt> és " +
