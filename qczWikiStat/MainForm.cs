@@ -1227,7 +1227,7 @@ namespace qczWikiStat
 						+ $"{userData.LevelAfterPeriod?.Level ?? -1}, "
 						+ $"{userData.TotalActiveDays}, "
 						+ $"{userData.TotalEditCount} "
-						+ "}");
+						+ "},");
 				}
 				tw.WriteLine("}\n");
 			}
