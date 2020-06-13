@@ -818,7 +818,7 @@ namespace qczWikiStat
 						var dailyAverageEdits = ((double)statisticsData.AllRevisionsInPeriod / Convert.ToDouble(endDatePicker.Value.Date.DaysBetween(startDatePicker.Value.Date)));
 
 						tw.WriteLine(
-							$"Az adott időszakban ({startDateDisplayed}–{endDateDisplayed}) " +
+							$"Az adott időszakban ({startDateDisplayed} – {endDateDisplayed}) " +
 							$"a magyar Wikipédiában átlagosan napi {DoubleToHungarifiedNumberString(dailyAverageEdits)} szerkesztés történt. " +
 							$"{LongToHungarifiedNumberString(statisticsData.AllRegisteredUsersInPeriod)} regisztrált szerkesztő {LongToHungarifiedNumberString(statisticsData.AllRegisteredUserEditsInPeriod)} szerkesztést, " +
 							$"{LongToHungarifiedNumberString(statisticsData.AllBotUsersInPeriod)} bot {LongToHungarifiedNumberString(statisticsData.AllBotUserEditsInPeriod)} szerkesztést és " +
@@ -1193,7 +1193,7 @@ namespace qczWikiStat
 			{
 				var startDateDisplayed = startDatePicker.Value.ToString(NICE_DATETIME_FORMAT_STRING, hungarianCulture);
 
-				tw.Write($"{footerIntro} a {startDateDisplayed}–{endDateDisplayed} időszakra.");
+				tw.Write($"{footerIntro} a {startDateDisplayed} – {endDateDisplayed} időszakra.");
 			}
 			else
 			{
