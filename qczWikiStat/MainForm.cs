@@ -837,7 +837,7 @@ namespace qczWikiStat
 
 				if (rankListOutputRadioButton.Checked)
 				{
-					tableContent.AppendLine("{| class=\"sortable wikitable\"\n! Rang !! Felhasználók");
+					tableContent.AppendLine("\n{| class=\"sortable wikitable\"\n! Rang !! Felhasználók");
 					tableContent.AppendLine("|-");
 				}
 
@@ -1236,7 +1236,7 @@ namespace qczWikiStat
 		}
 		private StringBuilder GetOutputTableHeader()
 		{
-			StringBuilder header = new StringBuilder("{| class=\"sortable wikitable\"\n! # !! Név");
+			StringBuilder header = new StringBuilder("\n{| class=\"sortable wikitable\"\n! # !! Név");
 			if (showPrivilegesCheckBox.Checked && privilegesInNewColumnCheckBix.Checked)
 				header.Append(" !! Jogosultságok");
 			if (showRankBeforePeriodCheckBox.Checked)
