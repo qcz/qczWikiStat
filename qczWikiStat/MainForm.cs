@@ -1,4 +1,4 @@
-using Microsoft.WindowsAPICodePack.Taskbar;
+﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using Newtonsoft.Json;
 using qcz.Dump;
 using qcz.Dump.StubMetaHistory;
@@ -1099,6 +1099,12 @@ namespace qczWikiStat
 						tableContent.Append(" || " + u.MeanEditsPerDay.ToString(doubleFormat));
 					if (startDateCheckBox.Checked && periodMeanEditsCheckBox.Checked)
 						tableContent.Append(" || " + u.GetMeanEditsPerDayInPeriod(startDatePicker.Value.Date, endDatePicker.Value.Date).ToString(doubleFormat));
+					tableContent.Append("\n");
+				}
+
+				// Level table requires an extra newline
+				if (levelListOutputRadioButton.Checked)
+				{
 					tableContent.Append("\n");
 				}
 
