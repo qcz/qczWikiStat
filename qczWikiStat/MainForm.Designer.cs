@@ -78,7 +78,7 @@
 			this.createCache = new System.Windows.Forms.CheckBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.rankListOutputRadioButton = new System.Windows.Forms.RadioButton();
+			this.levelListOutputRadioButton = new System.Windows.Forms.RadioButton();
 			this.statisticsOutputRadioButton = new System.Windows.Forms.RadioButton();
 			this.showPercentZerosCheckBox = new System.Windows.Forms.CheckBox();
 			this.reverseOrderCheckbox = new System.Windows.Forms.CheckBox();
@@ -91,9 +91,9 @@
 			this.label11 = new System.Windows.Forms.Label();
 			this.userDataTab = new System.Windows.Forms.TabPage();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
-			this.showRankBeforePeriodCheckBox = new System.Windows.Forms.CheckBox();
-			this.showRankInPeriodCheckBox = new System.Windows.Forms.CheckBox();
-			this.showRankChangeInPeriodCheckBox = new System.Windows.Forms.CheckBox();
+			this.showLevelBeforePeriodCheckBox = new System.Windows.Forms.CheckBox();
+			this.showLevelInPeriodCheckBox = new System.Windows.Forms.CheckBox();
+			this.showLevelChangeInPeriodCheckBox = new System.Windows.Forms.CheckBox();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.revertedEditsPercentageCheckBox = new System.Windows.Forms.CheckBox();
 			this.revertedEditsCheckBox = new System.Windows.Forms.CheckBox();
@@ -112,9 +112,9 @@
 			this.periodNsPcInfoLabel = new System.Windows.Forms.Label();
 			this.selectPeriodPcNsButton = new System.Windows.Forms.Button();
 			this.filterTab = new System.Windows.Forms.TabPage();
-			this.rankListComboBox = new System.Windows.Forms.ComboBox();
-			this.showUsersWithAGivenRankCheckbox = new System.Windows.Forms.CheckBox();
-			this.showOnlyRankChanges = new System.Windows.Forms.CheckBox();
+			this.levelListComboBox = new System.Windows.Forms.ComboBox();
+			this.showUsersWithAGivenLevelCheckbox = new System.Windows.Forms.CheckBox();
+			this.showOnlyLevelChanges = new System.Windows.Forms.CheckBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.allEditsInPeriodAtMostBox = new System.Windows.Forms.NumericUpDown();
 			this.label18 = new System.Windows.Forms.Label();
@@ -656,7 +656,7 @@
 			this.groupBox1.Controls.Add(this.createCache);
 			this.groupBox1.Controls.Add(this.label15);
 			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Controls.Add(this.rankListOutputRadioButton);
+			this.groupBox1.Controls.Add(this.levelListOutputRadioButton);
 			this.groupBox1.Controls.Add(this.statisticsOutputRadioButton);
 			this.groupBox1.Controls.Add(this.outputFileTextBox);
 			this.groupBox1.Controls.Add(this.showPercentZerosCheckBox);
@@ -718,16 +718,15 @@
 			this.label6.TabIndex = 46;
 			this.label6.Text = "Típusa:";
 			// 
-			// rankListOutputRadioButton
+			// levelListOutputRadioButton
 			// 
-			this.rankListOutputRadioButton.AutoSize = true;
-			this.rankListOutputRadioButton.Location = new System.Drawing.Point(133, 21);
-			this.rankListOutputRadioButton.Name = "rankListOutputRadioButton";
-			this.rankListOutputRadioButton.Size = new System.Drawing.Size(83, 17);
-			this.rankListOutputRadioButton.TabIndex = 45;
-			this.rankListOutputRadioButton.Text = "rangtáblázat";
-			this.rankListOutputRadioButton.UseVisualStyleBackColor = true;
-			this.rankListOutputRadioButton.CheckedChanged += new System.EventHandler(this.rankListOutputRadioButton_CheckedChanged);
+			this.levelListOutputRadioButton.AutoSize = true;
+			this.levelListOutputRadioButton.Location = new System.Drawing.Point(133, 21);
+			this.levelListOutputRadioButton.Name = "levelListOutputRadioButton";
+			this.levelListOutputRadioButton.Size = new System.Drawing.Size(83, 17);
+			this.levelListOutputRadioButton.TabIndex = 45;
+			this.levelListOutputRadioButton.Text = "szinttáblázat";
+			this.levelListOutputRadioButton.UseVisualStyleBackColor = true;
 			// 
 			// statisticsOutputRadioButton
 			// 
@@ -858,52 +857,52 @@
 			this.userDataTab.Location = new System.Drawing.Point(4, 22);
 			this.userDataTab.Name = "userDataTab";
 			this.userDataTab.Padding = new System.Windows.Forms.Padding(3);
-			this.userDataTab.Size = new System.Drawing.Size(987, 395);
+			this.userDataTab.Size = new System.Drawing.Size(987, 397);
 			this.userDataTab.TabIndex = 1;
 			this.userDataTab.Text = "Megjelenített oszlopok";
 			this.userDataTab.UseVisualStyleBackColor = true;
 			// 
 			// groupBox6
 			// 
-			this.groupBox6.Controls.Add(this.showRankBeforePeriodCheckBox);
-			this.groupBox6.Controls.Add(this.showRankInPeriodCheckBox);
-			this.groupBox6.Controls.Add(this.showRankChangeInPeriodCheckBox);
+			this.groupBox6.Controls.Add(this.showLevelBeforePeriodCheckBox);
+			this.groupBox6.Controls.Add(this.showLevelInPeriodCheckBox);
+			this.groupBox6.Controls.Add(this.showLevelChangeInPeriodCheckBox);
 			this.groupBox6.Location = new System.Drawing.Point(414, 216);
 			this.groupBox6.Name = "groupBox6";
 			this.groupBox6.Size = new System.Drawing.Size(412, 94);
 			this.groupBox6.TabIndex = 34;
 			this.groupBox6.TabStop = false;
-			this.groupBox6.Text = "Ranggal kapcsolatos adatok";
+			this.groupBox6.Text = "Szinttel kapcsolatos adatok";
 			// 
-			// showRankBeforePeriodCheckBox
+			// showLevelBeforePeriodCheckBox
 			// 
-			this.showRankBeforePeriodCheckBox.AutoSize = true;
-			this.showRankBeforePeriodCheckBox.Location = new System.Drawing.Point(9, 19);
-			this.showRankBeforePeriodCheckBox.Name = "showRankBeforePeriodCheckBox";
-			this.showRankBeforePeriodCheckBox.Size = new System.Drawing.Size(128, 17);
-			this.showRankBeforePeriodCheckBox.TabIndex = 29;
-			this.showRankBeforePeriodCheckBox.Text = "Rang az időszak előtt";
-			this.showRankBeforePeriodCheckBox.UseVisualStyleBackColor = true;
+			this.showLevelBeforePeriodCheckBox.AutoSize = true;
+			this.showLevelBeforePeriodCheckBox.Location = new System.Drawing.Point(9, 19);
+			this.showLevelBeforePeriodCheckBox.Name = "showLevelBeforePeriodCheckBox";
+			this.showLevelBeforePeriodCheckBox.Size = new System.Drawing.Size(125, 17);
+			this.showLevelBeforePeriodCheckBox.TabIndex = 29;
+			this.showLevelBeforePeriodCheckBox.Text = "Szint az időszak előtt";
+			this.showLevelBeforePeriodCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// showRankInPeriodCheckBox
+			// showLevelInPeriodCheckBox
 			// 
-			this.showRankInPeriodCheckBox.AutoSize = true;
-			this.showRankInPeriodCheckBox.Location = new System.Drawing.Point(9, 42);
-			this.showRankInPeriodCheckBox.Name = "showRankInPeriodCheckBox";
-			this.showRankInPeriodCheckBox.Size = new System.Drawing.Size(138, 17);
-			this.showRankInPeriodCheckBox.TabIndex = 30;
-			this.showRankInPeriodCheckBox.Text = "Rang az időszak végén";
-			this.showRankInPeriodCheckBox.UseVisualStyleBackColor = true;
+			this.showLevelInPeriodCheckBox.AutoSize = true;
+			this.showLevelInPeriodCheckBox.Location = new System.Drawing.Point(9, 42);
+			this.showLevelInPeriodCheckBox.Name = "showLevelInPeriodCheckBox";
+			this.showLevelInPeriodCheckBox.Size = new System.Drawing.Size(135, 17);
+			this.showLevelInPeriodCheckBox.TabIndex = 30;
+			this.showLevelInPeriodCheckBox.Text = "Szint az időszak végén";
+			this.showLevelInPeriodCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// showRankChangeInPeriodCheckBox
+			// showLevelChangeInPeriodCheckBox
 			// 
-			this.showRankChangeInPeriodCheckBox.AutoSize = true;
-			this.showRankChangeInPeriodCheckBox.Location = new System.Drawing.Point(9, 65);
-			this.showRankChangeInPeriodCheckBox.Name = "showRankChangeInPeriodCheckBox";
-			this.showRankChangeInPeriodCheckBox.Size = new System.Drawing.Size(199, 17);
-			this.showRankChangeInPeriodCheckBox.TabIndex = 31;
-			this.showRankChangeInPeriodCheckBox.Text = "Rang az időszak végén (változással)";
-			this.showRankChangeInPeriodCheckBox.UseVisualStyleBackColor = true;
+			this.showLevelChangeInPeriodCheckBox.AutoSize = true;
+			this.showLevelChangeInPeriodCheckBox.Location = new System.Drawing.Point(9, 65);
+			this.showLevelChangeInPeriodCheckBox.Name = "showLevelChangeInPeriodCheckBox";
+			this.showLevelChangeInPeriodCheckBox.Size = new System.Drawing.Size(196, 17);
+			this.showLevelChangeInPeriodCheckBox.TabIndex = 31;
+			this.showLevelChangeInPeriodCheckBox.Text = "Szint az időszak végén (változással)";
+			this.showLevelChangeInPeriodCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// groupBox5
 			// 
@@ -1098,9 +1097,9 @@
 			// 
 			// filterTab
 			// 
-			this.filterTab.Controls.Add(this.rankListComboBox);
-			this.filterTab.Controls.Add(this.showUsersWithAGivenRankCheckbox);
-			this.filterTab.Controls.Add(this.showOnlyRankChanges);
+			this.filterTab.Controls.Add(this.levelListComboBox);
+			this.filterTab.Controls.Add(this.showUsersWithAGivenLevelCheckbox);
+			this.filterTab.Controls.Add(this.showOnlyLevelChanges);
 			this.filterTab.Controls.Add(this.label17);
 			this.filterTab.Controls.Add(this.allEditsInPeriodAtMostBox);
 			this.filterTab.Controls.Add(this.label18);
@@ -1120,45 +1119,45 @@
 			this.filterTab.Location = new System.Drawing.Point(4, 22);
 			this.filterTab.Name = "filterTab";
 			this.filterTab.Padding = new System.Windows.Forms.Padding(3);
-			this.filterTab.Size = new System.Drawing.Size(987, 395);
+			this.filterTab.Size = new System.Drawing.Size(987, 397);
 			this.filterTab.TabIndex = 2;
 			this.filterTab.Text = "Szűrés";
 			this.filterTab.UseVisualStyleBackColor = true;
 			// 
-			// rankListComboBox
+			// levelListComboBox
 			// 
-			this.rankListComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.levelListComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.rankListComboBox.DisplayMember = "RankName";
-			this.rankListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.rankListComboBox.DropDownWidth = 400;
-			this.rankListComboBox.Enabled = false;
-			this.rankListComboBox.FormattingEnabled = true;
-			this.rankListComboBox.Location = new System.Drawing.Point(217, 240);
-			this.rankListComboBox.Name = "rankListComboBox";
-			this.rankListComboBox.Size = new System.Drawing.Size(669, 21);
-			this.rankListComboBox.TabIndex = 42;
+			this.levelListComboBox.DisplayMember = "LevelName";
+			this.levelListComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.levelListComboBox.DropDownWidth = 400;
+			this.levelListComboBox.Enabled = false;
+			this.levelListComboBox.FormattingEnabled = true;
+			this.levelListComboBox.Location = new System.Drawing.Point(217, 240);
+			this.levelListComboBox.Name = "levelListComboBox";
+			this.levelListComboBox.Size = new System.Drawing.Size(669, 21);
+			this.levelListComboBox.TabIndex = 42;
 			// 
-			// showUsersWithAGivenRankCheckbox
+			// showUsersWithAGivenLevelCheckbox
 			// 
-			this.showUsersWithAGivenRankCheckbox.AutoSize = true;
-			this.showUsersWithAGivenRankCheckbox.Location = new System.Drawing.Point(9, 242);
-			this.showUsersWithAGivenRankCheckbox.Name = "showUsersWithAGivenRankCheckbox";
-			this.showUsersWithAGivenRankCheckbox.Size = new System.Drawing.Size(183, 17);
-			this.showUsersWithAGivenRankCheckbox.TabIndex = 41;
-			this.showUsersWithAGivenRankCheckbox.Text = "Csak az ilyen rangú felhasználók:";
-			this.showUsersWithAGivenRankCheckbox.UseVisualStyleBackColor = true;
-			this.showUsersWithAGivenRankCheckbox.CheckedChanged += new System.EventHandler(this.showUsersWithAGivenRankCheckboxCheckedChanged);
+			this.showUsersWithAGivenLevelCheckbox.AutoSize = true;
+			this.showUsersWithAGivenLevelCheckbox.Location = new System.Drawing.Point(9, 242);
+			this.showUsersWithAGivenLevelCheckbox.Name = "showUsersWithAGivenLevelCheckbox";
+			this.showUsersWithAGivenLevelCheckbox.Size = new System.Drawing.Size(183, 17);
+			this.showUsersWithAGivenLevelCheckbox.TabIndex = 41;
+			this.showUsersWithAGivenLevelCheckbox.Text = "Csak az ilyen szintű felhasználók:";
+			this.showUsersWithAGivenLevelCheckbox.UseVisualStyleBackColor = true;
+			this.showUsersWithAGivenLevelCheckbox.CheckedChanged += new System.EventHandler(this.showUsersWithAGivenLevelCheckboxCheckedChanged);
 			// 
-			// showOnlyRankChanges
+			// showOnlyLevelChanges
 			// 
-			this.showOnlyRankChanges.AutoSize = true;
-			this.showOnlyRankChanges.Location = new System.Drawing.Point(9, 219);
-			this.showOnlyRankChanges.Name = "showOnlyRankChanges";
-			this.showOnlyRankChanges.Size = new System.Drawing.Size(148, 17);
-			this.showOnlyRankChanges.TabIndex = 40;
-			this.showOnlyRankChanges.Text = "Csak ha volt rangváltozás";
-			this.showOnlyRankChanges.UseVisualStyleBackColor = true;
+			this.showOnlyLevelChanges.AutoSize = true;
+			this.showOnlyLevelChanges.Location = new System.Drawing.Point(9, 219);
+			this.showOnlyLevelChanges.Name = "showOnlyLevelChanges";
+			this.showOnlyLevelChanges.Size = new System.Drawing.Size(148, 17);
+			this.showOnlyLevelChanges.TabIndex = 40;
+			this.showOnlyLevelChanges.Text = "Csak ha volt szintváltozás";
+			this.showOnlyLevelChanges.UseVisualStyleBackColor = true;
 			// 
 			// label17
 			// 
@@ -1529,14 +1528,14 @@
 		private System.Windows.Forms.NumericUpDown activePeriodDaysAtMostBox;
 		private System.Windows.Forms.Label label20;
 		private System.Windows.Forms.NumericUpDown activeDaysAtMostBox;
-		private System.Windows.Forms.CheckBox showRankChangeInPeriodCheckBox;
-		private System.Windows.Forms.CheckBox showRankBeforePeriodCheckBox;
-		private System.Windows.Forms.CheckBox showRankInPeriodCheckBox;
+		private System.Windows.Forms.CheckBox showLevelChangeInPeriodCheckBox;
+		private System.Windows.Forms.CheckBox showLevelBeforePeriodCheckBox;
+		private System.Windows.Forms.CheckBox showLevelInPeriodCheckBox;
 		private System.Windows.Forms.Label reqsStatusLabel;
-		private System.Windows.Forms.CheckBox showOnlyRankChanges;
-		private System.Windows.Forms.ComboBox rankListComboBox;
-		private System.Windows.Forms.CheckBox showUsersWithAGivenRankCheckbox;
-		private System.Windows.Forms.RadioButton rankListOutputRadioButton;
+		private System.Windows.Forms.CheckBox showOnlyLevelChanges;
+		private System.Windows.Forms.ComboBox levelListComboBox;
+		private System.Windows.Forms.CheckBox showUsersWithAGivenLevelCheckbox;
+		private System.Windows.Forms.RadioButton levelListOutputRadioButton;
 		private System.Windows.Forms.RadioButton statisticsOutputRadioButton;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.GroupBox groupBox3;

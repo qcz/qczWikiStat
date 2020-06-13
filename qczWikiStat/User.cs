@@ -62,13 +62,13 @@ namespace qczWikiStat
 		public bool IsBot => Rights.Contains(Right.Bot) || Rights.Contains(Right.UnflaggedBot);
 
 		[ProtoIgnore]
-		public ServiceRankRequirement RankBeforePeriod { get; set; }
+		public ServiceLevelRequirement LevelBeforePeriod { get; set; }
 		[ProtoIgnore]
-		public ServiceRankRequirement RankAfterPeriod { get; set; }
+		public ServiceLevelRequirement LevelAfterPeriod { get; set; }
 		[ProtoIgnore]
-		public double RankPosition { get; internal set; }
+		public double LevelPosition { get; internal set; }
 		[ProtoIgnore]
-		public ServiceRankRequirement NextRank { get; set; }
+		public ServiceLevelRequirement NextLevel { get; set; }
 
 		private User()
 		{

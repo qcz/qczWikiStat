@@ -32,7 +32,7 @@ namespace qczWikiStat
 		private string order = "all";
 		private FileStringListReader botsReader;
 		private FileStringListReader anonsReader;
-		private List<ServiceRankRequirement> ServiceRankRequirements = new List<ServiceRankRequirement>();
+		private List<ServiceLevelRequirement> ServiceLevelRequirements = new List<ServiceLevelRequirement>();
 		private Dictionary<string, List<string>> Aliases = new Dictionary<string, List<string>>();
 
 		private Dictionary<int, string> namespaces;
@@ -58,27 +58,27 @@ namespace qczWikiStat
 			var assemblyPath = Path.GetDirectoryName(typeof(MainForm).Assembly.Location);
 			try
 			{
-				using (StreamReader serviceReqsReader = File.OpenText(Path.Combine(assemblyPath, "ServiceRankRequirements.json")))
+				using (StreamReader serviceReqsReader = File.OpenText(Path.Combine(assemblyPath, "ServiceLevelRequirements.json")))
 				{
 					JsonSerializer serializer = new JsonSerializer();
-					ServiceRankRequirements = (List<ServiceRankRequirement>)serializer.Deserialize(serviceReqsReader, typeof(List<ServiceRankRequirement>));
-					if (ServiceRankRequirements.Count > 0)
+					ServiceLevelRequirements = (List<ServiceLevelRequirement>)serializer.Deserialize(serviceReqsReader, typeof(List<ServiceLevelRequirement>));
+					if (ServiceLevelRequirements.Count > 0)
 					{
 						int i = 0;
-						foreach (var rank in ServiceRankRequirements)
+						foreach (var level in ServiceLevelRequirements)
 						{
-							rank.Level = ++i;
+							level.Level = ++i;
 						}
 
-						rankListComboBox.Items.AddRange(ServiceRankRequirements.ToArray());
-						rankListComboBox.SelectedIndex = 0;
+						levelListComboBox.Items.AddRange(ServiceLevelRequirements.ToArray());
+						levelListComboBox.SelectedIndex = 0;
 					}
 				}
-				reqsStatusLabel.Text = $"{ServiceRankRequirements.Count} rangdefiníció betöltve.";
+				reqsStatusLabel.Text = $"{ServiceLevelRequirements.Count} szintdefiníció betöltve.";
 			}
 			catch (Exception ex)
 			{
-				reqsStatusLabel.Text = $"A rangdefiníciókat nem sikerült betölteni ({ex.GetType()}/{ex.Message})";
+				reqsStatusLabel.Text = $"A szintdefiníciókat nem sikerült betölteni ({ex.GetType()}/{ex.Message})";
 			}
 
 			try
@@ -222,7 +222,7 @@ namespace qczWikiStat
 			orderItems.Add(new OrderItem() { OrderId = "periodRev", Desc = "Visszaállított szerkesztés az adott időszakban", Type = OrderItemType.Period });
 			orderItems.Add(new OrderItem() { OrderId = "periodRev%", Desc = "Visszaállított szerkesztés % az adott időszakban", Type = OrderItemType.Period });
 			orderItems.Add(new OrderItem() { OrderId = "name", Desc = "Felhasználónév" });
-			orderItems.Add(new OrderItem() { OrderId = "rank", Desc = "Rang" });
+			orderItems.Add(new OrderItem() { OrderId = "level", Desc = "Szint" });
 
 			namespaces = smhDump.GetNamespaces();
 			namespaces.Add(0, "(fő)");
@@ -637,7 +637,7 @@ namespace qczWikiStat
 				}
 			}
 
-			// Determine user rank
+			// Determine user level
 			if (statisticsData.PeriodStartDate != null)
 			{
 				foreach (var user in statisticsData.Users.Values)
@@ -645,31 +645,31 @@ namespace qczWikiStat
 					if (user.IsBot || user.UserType != UserType.Registered)
 						continue;
 
-					user.RankBeforePeriod = ServiceRankRequirements.LastOrDefault(x =>
+					user.LevelBeforePeriod = ServiceLevelRequirements.LastOrDefault(x =>
 						user.TotalEditCountBeforePeriod > x.Edits
 						&& user.GetActiveDaysBeforePeriod(statisticsData.PeriodStartDate) > x.ActiveDays);
 
-					user.RankAfterPeriod = ServiceRankRequirements.LastOrDefault(x =>
+					user.LevelAfterPeriod = ServiceLevelRequirements.LastOrDefault(x =>
 						user.TotalEditCount > x.Edits
 						&& user.TotalActiveDays > x.ActiveDays);
 
-					double rankPosition = user.RankAfterPeriod?.Level ?? 0;
+					double levelPosition = user.LevelAfterPeriod?.Level ?? 0;
 
-					var nextRank = ServiceRankRequirements.FirstOrDefault(x => x.Level == (user.RankAfterPeriod?.Level ?? 0) + 1);
-					if (nextRank != null && user.IsBot == false)
+					var nextLevel = ServiceLevelRequirements.FirstOrDefault(x => x.Level == (user.LevelAfterPeriod?.Level ?? 0) + 1);
+					if (nextLevel != null && user.IsBot == false)
 					{
 						var editDaysRatio = (double)user.TotalEditCount / (double)user.TotalActiveDays;
 						double ratio;
 						if (editDaysRatio > 20)
-							ratio = (double)(user.TotalActiveDays - (user.RankAfterPeriod?.ActiveDays ?? 0)) / (double)(nextRank.ActiveDays - (user.RankAfterPeriod?.ActiveDays ?? 0));
+							ratio = (double)(user.TotalActiveDays - (user.LevelAfterPeriod?.ActiveDays ?? 0)) / (double)(nextLevel.ActiveDays - (user.LevelAfterPeriod?.ActiveDays ?? 0));
 						else
-							ratio = (double)(user.TotalEditCount - (user.RankAfterPeriod?.Edits ?? 0)) / (double)(nextRank.Edits - (user.RankAfterPeriod?.Edits ?? 0));
+							ratio = (double)(user.TotalEditCount - (user.LevelAfterPeriod?.Edits ?? 0)) / (double)(nextLevel.Edits - (user.LevelAfterPeriod?.Edits ?? 0));
 
-						rankPosition += ratio;
-						user.NextRank = nextRank;
+						levelPosition += ratio;
+						user.NextLevel = nextLevel;
 					}
 
-					user.RankPosition = rankPosition;
+					user.LevelPosition = levelPosition;
 				}
 			}
 
@@ -678,11 +678,11 @@ namespace qczWikiStat
 			IQueryable<User> baseUserList = statisticsData.Users.Values.AsQueryable();
 			IEnumerable<OrderedItem> keylist;
 
-			if (rankListOutputRadioButton.Checked)
+			if (levelListOutputRadioButton.Checked)
 			{
 				baseUserList = baseUserList
-					.Where(user => user.RankAfterPeriod != null)
-					.SmartOrderBy(user => user.RankAfterPeriod.Level);
+					.Where(user => user.LevelAfterPeriod != null)
+					.SmartOrderBy(user => user.LevelAfterPeriod.Level);
 			}
 
 			switch (order)
@@ -715,9 +715,9 @@ namespace qczWikiStat
 					keylist = baseUserList.SmartOrderBy(x => x.Name)
 						.Select(u => new OrderedItem() { UserId = u.Name, Key = u.Name });
 					break;
-				case "rank":
-					keylist = baseUserList.SmartOrderByDescending(x => x.RankPosition)
-						.Select(u => new OrderedItem() { UserId = u.Name, Key = u.RankPosition });
+				case "level":
+					keylist = baseUserList.SmartOrderByDescending(x => x.LevelPosition)
+						.Select(u => new OrderedItem() { UserId = u.Name, Key = u.LevelPosition });
 					break;
 				case "firstedit":
 					keylist = baseUserList.SmartOrderBy(user => user.FirstEditTimestamp.Value)
@@ -782,9 +782,9 @@ namespace qczWikiStat
 			if (reverseOrderCheckbox.Checked == true)
 				keylist = keylist.Reverse();
 
-			if (rankListOutputRadioButton.Checked || statisticsOutputRadioButton.Checked)
+			if (levelListOutputRadioButton.Checked || statisticsOutputRadioButton.Checked)
 			{
-				GenerateStandardStatisticsOrRankList(statisticsData, start, anons, keylist);
+				GenerateStandardStatisticsOrLevelList(statisticsData, start, anons, keylist);
 			}
 			else if (templateDataOutputRadioButton.Checked)
 			{
@@ -795,14 +795,14 @@ namespace qczWikiStat
 			cancelButton.Text = "OK";
 		}
 
-		private void GenerateStandardStatisticsOrRankList(StatisticsData statisticsData, DateTime? start, List<string> anons, IEnumerable<OrderedItem> keylist)
+		private void GenerateStandardStatisticsOrLevelList(StatisticsData statisticsData, DateTime? start, List<string> anons, IEnumerable<OrderedItem> keylist)
 		{
 			using (TextWriter tw = new StreamWriter(outputFileTextBox.Text))
 			{
 				int actuserCounter = 0;
 				object lastEditCount = null;
 
-				if (rankListOutputRadioButton.Checked == false)
+				if (levelListOutputRadioButton.Checked == false)
 				{
 					if (startDateCheckBox.Checked)
 					{
@@ -835,16 +835,16 @@ namespace qczWikiStat
 				StringBuilder header = GetOutputTableHeader();
 				StringBuilder tableContent = new StringBuilder();
 
-				if (rankListOutputRadioButton.Checked)
+				if (levelListOutputRadioButton.Checked)
 				{
-					tableContent.AppendLine("\n{| class=\"sortable wikitable\"\n! Rang !! Felhasználók");
+					tableContent.AppendLine("\n{| class=\"sortable wikitable\"\n! Szint !! Felhasználók");
 					tableContent.AppendLine("|-");
 				}
 
 				int listUserEdits = 0;
 				int listUserEditsInPeriod = 0;
 				int maxUsersInList = Convert.ToInt32(userCountBox.Value);
-				ServiceRankRequirement previousRank = null;
+				ServiceLevelRequirement previousLevel = null;
 
 				int userCounter = 0;
 				foreach (OrderedItem oitem in keylist)
@@ -900,30 +900,30 @@ namespace qczWikiStat
 						u.GetActiveDaysInPeriod(start.Value, endDatePicker.Value) > activePeriodDaysAtMostBox.Value)
 						continue;
 
-					if (showOnlyRankChanges.Checked && u.RankBeforePeriod == u.RankAfterPeriod)
+					if (showOnlyLevelChanges.Checked && u.LevelBeforePeriod == u.LevelAfterPeriod)
 						continue;
 
-					if (showUsersWithAGivenRankCheckbox.Checked
-						&& Object.Equals(u.RankAfterPeriod, rankListComboBox.SelectedItem) == false)
+					if (showUsersWithAGivenLevelCheckbox.Checked
+						&& Object.Equals(u.LevelAfterPeriod, levelListComboBox.SelectedItem) == false)
 					{
 						continue;
 					}
 
-					if (rankListOutputRadioButton.Checked)
+					if (levelListOutputRadioButton.Checked)
 					{
-						if (u.RankAfterPeriod == null)
+						if (u.LevelAfterPeriod == null)
 							continue;
 
-						if (previousRank != u.RankAfterPeriod)
+						if (previousLevel != u.LevelAfterPeriod)
 						{
-							if (previousRank != null)
+							if (previousLevel != null)
 							{
 								tableContent.AppendLine("\n|-");
 							}
 
-							tableContent.AppendLine($"| {u.RankAfterPeriod.RankName}");
+							tableContent.AppendLine($"| {u.LevelAfterPeriod.LevelName}");
 							tableContent.Append("| ");
-							previousRank = u.RankAfterPeriod;
+							previousLevel = u.LevelAfterPeriod;
 							actuserCounter = 0;
 							userCounter = 0;
 							lastEditCount = null;
@@ -994,7 +994,7 @@ namespace qczWikiStat
 						listUserEditsInPeriod += u.TotalEditCountInPeriod;
 					}
 
-					if (rankListOutputRadioButton.Checked)
+					if (levelListOutputRadioButton.Checked)
 					{
 						tableContent.Append("[[User:" + u.Name + "|" + u.Name + "]], ");
 						continue;
@@ -1034,22 +1034,22 @@ namespace qczWikiStat
 								tableContent.Append("<small>" + rAppend + "</small>");
 						}
 					}
-					if (showRankBeforePeriodCheckBox.Checked)
+					if (showLevelBeforePeriodCheckBox.Checked)
 					{
-						tableContent.Append(" || " + (u.RankBeforePeriod?.RankName ?? "''nincs''"));
+						tableContent.Append(" || " + (u.LevelBeforePeriod?.LevelName ?? "''nincs''"));
 					}
 
-					if (showRankInPeriodCheckBox.Checked)
+					if (showLevelInPeriodCheckBox.Checked)
 					{
-						tableContent.Append(" || {{Rrk|" + u.RankPosition.ToString("0.0##", CultureInfo.InvariantCulture) + "}}"
-							+ (u.RankAfterPeriod?.RankName ?? "''nincs''"));
+						tableContent.Append(" || {{Rrk|" + u.LevelPosition.ToString("0.0##", CultureInfo.InvariantCulture) + "}}"
+							+ (u.LevelAfterPeriod?.LevelName ?? "''nincs''"));
 					}
-					if (showRankChangeInPeriodCheckBox.Checked)
+					if (showLevelChangeInPeriodCheckBox.Checked)
 					{
-						var changeMarker = u.RankAfterPeriod != null && u.RankAfterPeriod != u.RankBeforePeriod ? " {{Szintlépés}}" : "";
-						tableContent.Append(" || {{Rrk|" + u.RankPosition.ToString("0.0##", CultureInfo.InvariantCulture) + "}}"
+						var changeMarker = u.LevelAfterPeriod != null && u.LevelAfterPeriod != u.LevelBeforePeriod ? " {{Szintlépés}}" : "";
+						tableContent.Append(" || {{Rrk|" + u.LevelPosition.ToString("0.0##", CultureInfo.InvariantCulture) + "}}"
 							+ changeMarker
-							+ (u.RankAfterPeriod?.RankName ?? "''nincs''"));
+							+ (u.LevelAfterPeriod?.LevelName ?? "''nincs''"));
 					}
 
 					if (allEditsCheckBox.Checked)
@@ -1117,7 +1117,7 @@ namespace qczWikiStat
 					));
 				}
 
-				if (rankListOutputRadioButton.Checked == false)
+				if (levelListOutputRadioButton.Checked == false)
 					tw.WriteLine(header.ToString());
 
 				tw.Write(tableContent.ToString());
@@ -1189,19 +1189,19 @@ namespace qczWikiStat
 		{
 			using (TextWriter tw = new StreamWriter(outputFileTextBox.Text))
 			{
-				var firstRank = ServiceRankRequirements[0];
-				var requiredActiveDays = firstRank.ActiveDays / 2;
-				var requiredTotalEdits = firstRank.Edits / 2;
+				var firstLevel = ServiceLevelRequirements[0];
+				var requiredActiveDays = firstLevel.ActiveDays / 2;
+				var requiredTotalEdits = firstLevel.Edits / 2;
 
 				//string prevStartingCharacter = null;
-				tw.WriteLine("ranks = {\n");
-				foreach (var rank in ServiceRankRequirements)
+				tw.WriteLine("levels = {\n");
+				foreach (var level in ServiceLevelRequirements)
 				{
 					tw.WriteLine("\t{ "
-						+ $"{rank.Level}, "
-						+ $"\"{rank.RankName}\", "
-						+ $"{rank.ActiveDays}, "
-						+ $"{rank.Edits}, "
+						+ $"{level.Level}, "
+						+ $"\"{level.LevelName}\", "
+						+ $"{level.ActiveDays}, "
+						+ $"{level.Edits}, "
 						+ "},");
 				}
 				tw.WriteLine("}\n");
@@ -1220,16 +1220,10 @@ namespace qczWikiStat
 
 					var userData = userKvp.Value;
 					tw.WriteLine($"\t[\"{userKvp.Key}\"] = {{ "
-						+ $"{userData.RankAfterPeriod?.Level ?? -1}, "
+						+ $"{userData.LevelAfterPeriod?.Level ?? -1}, "
 						+ $"{userData.TotalActiveDays}, "
-						+ $"{userData.TotalEditCount}, "
-						+ $"{userData.NextRank?.Level ?? -1} "
+						+ $"{userData.TotalEditCount} "
 						+ "}");
-					//var currentStartingCharacter = userKvp.Key.Substring(0, 1);
-					//if (prevStartingCharacter != currentStartingCharacter)
-					//{
-
-					//}
 				}
 				tw.WriteLine("}\n");
 			}
@@ -1239,12 +1233,12 @@ namespace qczWikiStat
 			StringBuilder header = new StringBuilder("\n{| class=\"sortable wikitable\"\n! # !! Név");
 			if (showPrivilegesCheckBox.Checked && privilegesInNewColumnCheckBix.Checked)
 				header.Append(" !! Jogosultságok");
-			if (showRankBeforePeriodCheckBox.Checked)
-				header.Append(" !! Előző rang");
-			if (showRankInPeriodCheckBox.Checked)
-				header.Append(" !! Aktuális rang");
-			if (showRankChangeInPeriodCheckBox.Checked)
-				header.Append(" !! Rang");
+			if (showLevelBeforePeriodCheckBox.Checked)
+				header.Append(" !! Előző szint");
+			if (showLevelInPeriodCheckBox.Checked)
+				header.Append(" !! Aktuális szint");
+			if (showLevelChangeInPeriodCheckBox.Checked)
+				header.Append(" !! Szint");
 
 			if (allEditsCheckBox.Checked)
 				header.Append(" !! Összes szerk.");
@@ -1310,13 +1304,9 @@ namespace qczWikiStat
 			settingsTabControl.Enabled = true;
 		}
 
-		private void showUsersWithAGivenRankCheckboxCheckedChanged(object sender, EventArgs e)
+		private void showUsersWithAGivenLevelCheckboxCheckedChanged(object sender, EventArgs e)
 		{
-			rankListComboBox.Enabled = showUsersWithAGivenRankCheckbox.Checked;
-		}
-
-		private void rankListOutputRadioButton_CheckedChanged(object sender, EventArgs e)
-		{
+			levelListComboBox.Enabled = showUsersWithAGivenLevelCheckbox.Checked;
 		}
 	}
 }

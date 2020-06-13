@@ -80,7 +80,7 @@
     <Compile Include="Dump\StubMetaHistory\DumpReaderState.cs" />
     <Compile Include="Dump\StubMetaHistory\StubMetaHistoryDumpReader.cs" />
     <Compile Include="Dump\UserType.cs" />
-    <Compile Include="Models\ServiceAwardRankRequirements.cs" />
+    <Compile Include="Models\ServiceLevelRequirement.cs" />
     <Compile Include="Models\StatisticsData.cs" />
     <Compile Include="NamespacesForm.cs">
       <SubType>Form</SubType>
