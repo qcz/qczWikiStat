@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Taskbar;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using Newtonsoft.Json;
 using qcz.Dump;
 using qcz.Dump.StubMetaHistory;
@@ -55,6 +55,7 @@ namespace qczWikiStat
 
 		private void MainFormLoad(object sender, EventArgs e)
 		{
+
 			var assemblyPath = Path.GetDirectoryName(typeof(MainForm).Assembly.Location);
 			try
 			{
@@ -95,10 +96,15 @@ namespace qczWikiStat
 				aliasStatusLabel.Text = $"Az aliasokat nem sikerült betölteni ({ex.GetType()}/{ex.Message})";
 			}
 
+#if DEBUG
+			startDatePicker.Value = new DateTime(2019, 07, 01);
+			endDatePicker.Value = new DateTime(2019, 07, 31);
+#else
 			int year = DateTime.Now.Month == 1 ? DateTime.Now.Year - 1 : DateTime.Now.Year;
 			int month = DateTime.Now.Month == 1 ? 12 : DateTime.Now.Month - 1;
 			startDatePicker.Value = new DateTime(year, month, 1);
 			endDatePicker.Value = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+#endif
 
 			botsReader = new FileStringListReader("bots.txt");
 			anonsReader = new FileStringListReader("anons.txt");
