@@ -928,6 +928,10 @@ namespace qczWikiStat
 							userCounter = 0;
 							lastEditCount = null;
 						}
+						else
+						{
+							tableContent.Append(", ");
+						}
 					}
 
 					if (!u.IsBot)
@@ -996,7 +1000,7 @@ namespace qczWikiStat
 
 					if (levelListOutputRadioButton.Checked)
 					{
-						tableContent.Append("[[User:" + u.Name + "|" + u.Name + "]], ");
+						tableContent.Append("[[User:" + u.Name + "|" + u.Name + "]]");
 						continue;
 					}
 
