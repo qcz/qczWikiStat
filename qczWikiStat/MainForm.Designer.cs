@@ -136,6 +136,7 @@
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.reqsStatusLabel = new System.Windows.Forms.Label();
 			this.aliasStatusLabel = new System.Windows.Forms.Label();
+			this.showOnlyUsersWithLevel = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.userCountBox)).BeginInit();
 			this.settingsTabControl.SuspendLayout();
 			this.baseSettingsTab.SuspendLayout();
@@ -1097,6 +1098,7 @@
 			// 
 			// filterTab
 			// 
+			this.filterTab.Controls.Add(this.showOnlyUsersWithLevel);
 			this.filterTab.Controls.Add(this.levelListComboBox);
 			this.filterTab.Controls.Add(this.showUsersWithAGivenLevelCheckbox);
 			this.filterTab.Controls.Add(this.showOnlyLevelChanges);
@@ -1388,6 +1390,16 @@
 			this.aliasStatusLabel.TabIndex = 16;
 			this.aliasStatusLabel.Text = "_";
 			// 
+			// showOnlyUsersWithLevel
+			// 
+			this.showOnlyUsersWithLevel.AutoSize = true;
+			this.showOnlyUsersWithLevel.Location = new System.Drawing.Point(9, 265);
+			this.showOnlyUsersWithLevel.Name = "showOnlyUsersWithLevel";
+			this.showOnlyUsersWithLevel.Size = new System.Drawing.Size(198, 17);
+			this.showOnlyUsersWithLevel.TabIndex = 43;
+			this.showOnlyUsersWithLevel.Text = "Csak ha van szintje a szerkesztőnek";
+			this.showOnlyUsersWithLevel.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1555,6 +1567,7 @@
 		private System.Windows.Forms.CheckBox periodRevertedEditsPercentageCheckBox;
 		private System.Windows.Forms.Label aliasStatusLabel;
 		private System.Windows.Forms.RadioButton templateDataOutputRadioButton;
+		private System.Windows.Forms.CheckBox showOnlyUsersWithLevel;
 	}
 }
 

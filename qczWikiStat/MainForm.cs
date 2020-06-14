@@ -909,6 +909,9 @@ namespace qczWikiStat
 					if (showOnlyLevelChanges.Checked && u.LevelBeforePeriod == u.LevelAfterPeriod)
 						continue;
 
+					if (showOnlyUsersWithLevel.Checked && u.LevelAfterPeriod == null)
+						continue;
+
 					if (showUsersWithAGivenLevelCheckbox.Checked
 						&& Object.Equals(u.LevelAfterPeriod, levelListComboBox.SelectedItem) == false)
 					{
@@ -1217,7 +1220,7 @@ namespace qczWikiStat
 						+ $"{level.Level}, "
 						+ $"\"{level.LevelName}\", "
 						+ $"{level.ActiveDays}, "
-						+ $"{level.Edits}, "
+						+ $"{level.Edits} "
 						+ "},");
 				}
 				tw.WriteLine("}\n");
