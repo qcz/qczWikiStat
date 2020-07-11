@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Taskbar;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using Newtonsoft.Json;
 using qcz.Dump;
 using qcz.Dump.StubMetaHistory;
@@ -33,7 +33,7 @@ namespace qczWikiStat
 		private FileStringListReader botsReader;
 		private FileStringListReader anonsReader;
 		private List<ServiceLevelRequirement> ServiceLevelRequirements = new List<ServiceLevelRequirement>();
-		private Dictionary<string, List<string>> Aliases = new Dictionary<string, List<string>>();
+		private Dictionary<string, List<Alias>> Aliases = new Dictionary<string, List<Alias>>();
 
 		private Dictionary<int, string> namespaces;
 		private List<int> selectedAllNamespaces;
@@ -87,7 +87,7 @@ namespace qczWikiStat
 				using (StreamReader serviceReqsReader = File.OpenText(Path.Combine(assemblyPath, "Aliases.json")))
 				{
 					JsonSerializer serializer = new JsonSerializer();
-					Aliases = (Dictionary<string, List<string>>)serializer.Deserialize(serviceReqsReader, typeof(Dictionary<string, List<string>>));
+					Aliases = (Dictionary<string, List<Alias>>)serializer.Deserialize(serviceReqsReader, typeof(Dictionary<string, List<Alias>>));
 				}
 				aliasStatusLabel.Text = $"{Aliases.Count} alias betöltve.";
 			}
@@ -631,14 +631,14 @@ namespace qczWikiStat
 
 					var user = statisticsData.Users[aliasKvp.Key];
 
-					foreach (var mergedUserName in aliasKvp.Value)
+					foreach (var mergedUser in aliasKvp.Value)
 					{
-						if (statisticsData.Users.ContainsKey(mergedUserName) == false
-							|| mergedUserName == aliasKvp.Key)
+						if (statisticsData.Users.ContainsKey(mergedUser.UserName) == false
+							|| mergedUser.UserName == aliasKvp.Key)
 							continue;
 
-						user.Merge(statisticsData.Users[mergedUserName]);
-						statisticsData.Users.Remove(mergedUserName);
+						user.Merge(statisticsData.Users[mergedUser.UserName], mergedUser.Multiplier);
+						statisticsData.Users.Remove(mergedUser.UserName);
 					}
 				}
 			}

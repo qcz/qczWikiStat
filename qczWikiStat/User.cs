@@ -168,16 +168,16 @@ namespace qczWikiStat
 			? (double)TotalEditCountInPeriod / (double)(periodEnd.DaysBetween(periodStart))
 			: 0.0;
 
-		public void Merge(User otherUser)
+		public void Merge(User otherUser, double multiplier)
 		{
 			if (otherUser.AllEditsByNamespace != null)
 			{
 				foreach (var allEditKvp in otherUser.AllEditsByNamespace)
 				{
 					if (AllEditsByNamespace.ContainsKey(allEditKvp.Key))
-						AllEditsByNamespace[allEditKvp.Key] += allEditKvp.Value;
+						AllEditsByNamespace[allEditKvp.Key] += Convert.ToInt32(Math.Floor(allEditKvp.Value * multiplier));
 					else
-						AllEditsByNamespace[allEditKvp.Key] = allEditKvp.Value;
+						AllEditsByNamespace[allEditKvp.Key] = Convert.ToInt32(Math.Floor(allEditKvp.Value * multiplier));
 				}
 			}
 
@@ -186,9 +186,9 @@ namespace qczWikiStat
 				foreach (var allRevEditKvp in otherUser.AllRevertedEditsByNamespace)
 				{
 					if (AllRevertedEditsByNamespace.ContainsKey(allRevEditKvp.Key))
-						AllRevertedEditsByNamespace[allRevEditKvp.Key] += allRevEditKvp.Value;
+						AllRevertedEditsByNamespace[allRevEditKvp.Key] += Convert.ToInt32(Math.Floor(allRevEditKvp.Value * multiplier));
 					else
-						AllRevertedEditsByNamespace[allRevEditKvp.Key] = allRevEditKvp.Value;
+						AllRevertedEditsByNamespace[allRevEditKvp.Key] = Convert.ToInt32(Math.Floor(allRevEditKvp.Value * multiplier));
 				}
 			}
 
@@ -197,9 +197,9 @@ namespace qczWikiStat
 				foreach (var allBefPeriodEditKvp in otherUser.AllEditsBeforePeriodByNamespace)
 				{
 					if (AllEditsBeforePeriodByNamespace.ContainsKey(allBefPeriodEditKvp.Key))
-						AllEditsBeforePeriodByNamespace[allBefPeriodEditKvp.Key] += allBefPeriodEditKvp.Value;
+						AllEditsBeforePeriodByNamespace[allBefPeriodEditKvp.Key] += Convert.ToInt32(Math.Floor(allBefPeriodEditKvp.Value * multiplier));
 					else
-						AllEditsBeforePeriodByNamespace[allBefPeriodEditKvp.Key] = allBefPeriodEditKvp.Value;
+						AllEditsBeforePeriodByNamespace[allBefPeriodEditKvp.Key] = Convert.ToInt32(Math.Floor(allBefPeriodEditKvp.Value * multiplier));
 				}
 			}
 
@@ -208,9 +208,9 @@ namespace qczWikiStat
 				foreach (var allRevBefPeriodEditKvp in otherUser.AllRevertedEditsBeforePeriodByNamespace)
 				{
 					if (AllRevertedEditsBeforePeriodByNamespace.ContainsKey(allRevBefPeriodEditKvp.Key))
-						AllRevertedEditsBeforePeriodByNamespace[allRevBefPeriodEditKvp.Key] += allRevBefPeriodEditKvp.Value;
+						AllRevertedEditsBeforePeriodByNamespace[allRevBefPeriodEditKvp.Key] += Convert.ToInt32(Math.Floor(allRevBefPeriodEditKvp.Value * multiplier));
 					else
-						AllRevertedEditsBeforePeriodByNamespace[allRevBefPeriodEditKvp.Key] = allRevBefPeriodEditKvp.Value;
+						AllRevertedEditsBeforePeriodByNamespace[allRevBefPeriodEditKvp.Key] = Convert.ToInt32(Math.Floor(allRevBefPeriodEditKvp.Value * multiplier));
 				}
 			}
 
@@ -219,9 +219,9 @@ namespace qczWikiStat
 				foreach (var allInPeriodEditKvp in otherUser.AllEditsInPeriodByNamespace)
 				{
 					if (AllEditsInPeriodByNamespace.ContainsKey(allInPeriodEditKvp.Key))
-						AllEditsInPeriodByNamespace[allInPeriodEditKvp.Key] += allInPeriodEditKvp.Value;
+						AllEditsInPeriodByNamespace[allInPeriodEditKvp.Key] += Convert.ToInt32(Math.Floor(allInPeriodEditKvp.Value * multiplier));
 					else
-						AllEditsInPeriodByNamespace[allInPeriodEditKvp.Key] = allInPeriodEditKvp.Value;
+						AllEditsInPeriodByNamespace[allInPeriodEditKvp.Key] = Convert.ToInt32(Math.Floor(allInPeriodEditKvp.Value * multiplier));
 				}
 			}
 
@@ -230,9 +230,9 @@ namespace qczWikiStat
 				foreach (var allRevInPeriodEditKvp in otherUser.AllRevertedEditsInPeriodByNamespace)
 				{
 					if (AllRevertedEditsInPeriodByNamespace.ContainsKey(allRevInPeriodEditKvp.Key))
-						AllRevertedEditsInPeriodByNamespace[allRevInPeriodEditKvp.Key] += allRevInPeriodEditKvp.Value;
+						AllRevertedEditsInPeriodByNamespace[allRevInPeriodEditKvp.Key] += Convert.ToInt32(Math.Floor(allRevInPeriodEditKvp.Value * multiplier));
 					else
-						AllRevertedEditsInPeriodByNamespace[allRevInPeriodEditKvp.Key] = allRevInPeriodEditKvp.Value;
+						AllRevertedEditsInPeriodByNamespace[allRevInPeriodEditKvp.Key] = Convert.ToInt32(Math.Floor(allRevInPeriodEditKvp.Value * multiplier));
 				}
 			}
 
