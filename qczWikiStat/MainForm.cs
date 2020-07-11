@@ -1,4 +1,4 @@
-using Microsoft.WindowsAPICodePack.Taskbar;
+﻿using Microsoft.WindowsAPICodePack.Taskbar;
 using Newtonsoft.Json;
 using qcz.Dump;
 using qcz.Dump.StubMetaHistory;
@@ -794,7 +794,7 @@ namespace qczWikiStat
 			}
 			else if (templateDataOutputRadioButton.Checked)
 			{
-				GenerateTemplateData(statisticsData, start, anons, keylist);
+				GenerateServiceAwardModuleData(statisticsData, start, anons, keylist);
 			}
 
 			UpdateStatus("Kész.", 0, true);
@@ -1163,19 +1163,9 @@ namespace qczWikiStat
 
 		private void GenerateFooter(TextWriter tw)
 		{
-			var smhNameMatcher = new Regex(@"(\d{8})-stub-meta-history");
-
-			var dateMatch = smhNameMatcher.Match(StubMetHistoryDumpFilePath);
-			DateTime dumpDate = DateTime.MinValue;
+			DateTime dumpDate = GetDumpDate();
 			string footerIntro;
 
-			if (dateMatch.Success)
-			{
-				var rawDumpDate = dateMatch.Groups[1].Value;
-				DateTime.TryParseExact(rawDumpDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dumpDate);
-
-			}
-			
 			if (dumpDate != DateTime.MinValue)
 			{
 				var dumpDateDisplayed = dumpDate.ToString(NICE_DATETIME_FORMAT_STRING_WITHOUT_DOT, hungarianCulture);
@@ -1204,28 +1194,67 @@ namespace qczWikiStat
 			}
 		}
 
-		private void GenerateTemplateData(StatisticsData statisticsData, DateTime? start, List<string> anons, IEnumerable<OrderedItem> keylist)
+		private DateTime GetDumpDate()
+		{
+			var smhNameMatcher = new Regex(@"(\d{8})-stub-meta-history");
+
+			var dateMatch = smhNameMatcher.Match(StubMetHistoryDumpFilePath);
+			DateTime dumpDate = DateTime.MinValue;
+
+			if (dateMatch.Success)
+			{
+				var rawDumpDate = dateMatch.Groups[1].Value;
+				DateTime.TryParseExact(rawDumpDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dumpDate);
+
+			}
+
+			return dumpDate;
+		}
+
+		private void GenerateServiceAwardModuleData(StatisticsData statisticsData, DateTime? start, List<string> anons, IEnumerable<OrderedItem> keylist)
 		{
 			using (TextWriter tw = new StreamWriter(outputFileTextBox.Text))
 			{
+				DateTime dumpDate = GetDumpDate();
+
+				if (dumpDate != DateTime.MinValue)
+				{
+					var dumpDateDisplayed = dumpDate.ToString(NICE_DATETIME_FORMAT_STRING_WITHOUT_DOT, hungarianCulture);
+
+					tw.WriteLine($"-- Ez a statisztika a {dumpDateDisplayed}-i adatbázisdump " +
+						$"{Path.GetFileName(StubMetHistoryDumpFilePath)} és " +
+						$"{Path.GetFileName(UserGroupsDumpFilePath)} állományai alapján és qczWikiStat segítségével készült");
+				}
+				else
+				{
+					tw.WriteLine($"--Ez a statisztika a " +
+						$"{Path.GetFileName(StubMetHistoryDumpFilePath)} és " +
+						$"{Path.GetFileName(UserGroupsDumpFilePath)} állományok alapján és qczWikiStat segítségével készült");
+				}
+
+				tw.WriteLine();
+
 				var firstLevel = ServiceLevelRequirements[0];
 				var requiredActiveDays = firstLevel.ActiveDays / 2;
 				var requiredTotalEdits = firstLevel.Edits / 2;
 
 				//string prevStartingCharacter = null;
-				tw.WriteLine("levels = {\n");
+				tw.WriteLine("levels = {");
 				foreach (var level in ServiceLevelRequirements)
 				{
 					tw.WriteLine("\t{ "
 						+ $"{level.Level}, "
 						+ $"\"{level.LevelName}\", "
 						+ $"{level.ActiveDays}, "
-						+ $"{level.Edits} "
-						+ "},");
+						+ $"{level.Edits}, "
+						+ $"\"{level.ImageName}\", "
+						+ $"\"{level.UserBoxIdColor}\", "
+						+ $"\"{level.UserBoxBackgroundColor}\""
+						+ " },");
 				}
 				tw.WriteLine("}\n");
 
-				tw.WriteLine("statistics = {\n");
+				tw.WriteLine("statistics = {");
 
 				foreach (var userKvp in statisticsData.Users
 					.Where(x => x.Value.UserType == UserType.Registered

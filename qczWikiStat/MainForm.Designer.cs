@@ -112,6 +112,7 @@
 			this.periodNsPcInfoLabel = new System.Windows.Forms.Label();
 			this.selectPeriodPcNsButton = new System.Windows.Forms.Button();
 			this.filterTab = new System.Windows.Forms.TabPage();
+			this.showOnlyUsersWithLevel = new System.Windows.Forms.CheckBox();
 			this.levelListComboBox = new System.Windows.Forms.ComboBox();
 			this.showUsersWithAGivenLevelCheckbox = new System.Windows.Forms.CheckBox();
 			this.showOnlyLevelChanges = new System.Windows.Forms.CheckBox();
@@ -136,7 +137,6 @@
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.reqsStatusLabel = new System.Windows.Forms.Label();
 			this.aliasStatusLabel = new System.Windows.Forms.Label();
-			this.showOnlyUsersWithLevel = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.userCountBox)).BeginInit();
 			this.settingsTabControl.SuspendLayout();
 			this.baseSettingsTab.SuspendLayout();
@@ -684,9 +684,9 @@
 			this.templateDataOutputRadioButton.AutoSize = true;
 			this.templateDataOutputRadioButton.Location = new System.Drawing.Point(222, 21);
 			this.templateDataOutputRadioButton.Name = "templateDataOutputRadioButton";
-			this.templateDataOutputRadioButton.Size = new System.Drawing.Size(56, 17);
+			this.templateDataOutputRadioButton.Size = new System.Drawing.Size(140, 17);
 			this.templateDataOutputRadioButton.TabIndex = 49;
-			this.templateDataOutputRadioButton.Text = "sablon";
+			this.templateDataOutputRadioButton.Text = "ServiceAward modulkód";
 			this.templateDataOutputRadioButton.UseVisualStyleBackColor = true;
 			// 
 			// createCache
@@ -1126,6 +1126,16 @@
 			this.filterTab.Text = "Szűrés";
 			this.filterTab.UseVisualStyleBackColor = true;
 			// 
+			// showOnlyUsersWithLevel
+			// 
+			this.showOnlyUsersWithLevel.AutoSize = true;
+			this.showOnlyUsersWithLevel.Location = new System.Drawing.Point(9, 265);
+			this.showOnlyUsersWithLevel.Name = "showOnlyUsersWithLevel";
+			this.showOnlyUsersWithLevel.Size = new System.Drawing.Size(198, 17);
+			this.showOnlyUsersWithLevel.TabIndex = 43;
+			this.showOnlyUsersWithLevel.Text = "Csak ha van szintje a szerkesztőnek";
+			this.showOnlyUsersWithLevel.UseVisualStyleBackColor = true;
+			// 
 			// levelListComboBox
 			// 
 			this.levelListComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -1389,16 +1399,6 @@
 			this.aliasStatusLabel.Size = new System.Drawing.Size(13, 13);
 			this.aliasStatusLabel.TabIndex = 16;
 			this.aliasStatusLabel.Text = "_";
-			// 
-			// showOnlyUsersWithLevel
-			// 
-			this.showOnlyUsersWithLevel.AutoSize = true;
-			this.showOnlyUsersWithLevel.Location = new System.Drawing.Point(9, 265);
-			this.showOnlyUsersWithLevel.Name = "showOnlyUsersWithLevel";
-			this.showOnlyUsersWithLevel.Size = new System.Drawing.Size(198, 17);
-			this.showOnlyUsersWithLevel.TabIndex = 43;
-			this.showOnlyUsersWithLevel.Text = "Csak ha van szintje a szerkesztőnek";
-			this.showOnlyUsersWithLevel.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
