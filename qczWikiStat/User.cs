@@ -11,12 +11,16 @@ namespace qczWikiStat
 	[ProtoContract]
 	public class User
 	{
+		public const string DELETED_USER = "@@DELETED_USER";
+
 		[ProtoMember(1)]
 		public int Id { get; set; } = -1;
 		[ProtoMember(2)]
 		public string Name { get; private set; }
 		[ProtoMember(3)]
 		public UserType UserType { get; private set; }
+		[ProtoMember(4)]
+		public bool IsDeleted { get; set; }
 
 		[ProtoMember(10)]
 		private Dictionary<int, int> AllEditsByNamespace = new Dictionary<int, int>();
@@ -263,10 +267,12 @@ namespace qczWikiStat
 
 		public static User CreateFromDumpArticleRevision(DumpArticleRevision rev)
 		{
+			bool isDeleted = string.IsNullOrWhiteSpace(rev.UserUniqueIdentifier);
 			return new User()
 			{
-				UserType = rev.UserType,
-				Name = rev.UserUniqueIdentifier
+				UserType = isDeleted ? UserType.Registered : rev.UserType,
+				Name = isDeleted ? DELETED_USER : rev.UserUniqueIdentifier,
+				IsDeleted = isDeleted,
 			};
 		}
 	}

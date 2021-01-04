@@ -425,7 +425,7 @@ namespace qczWikiStat
 				Path.GetFileNameWithoutExtension(smhDump.FilePath)
 				+ (startDateCheckBox.Checked ? "-" + startDatePicker.Value.ToString("yyyyMMdd") : "")
 				+  "-" + endDatePicker.Value.ToString("yyyyMMdd")
-				+ ".cache"
+				+ ".v2-cache"
 			);
 
 			if (createCache.Checked && File.Exists(cacheFile))
@@ -528,16 +528,15 @@ namespace qczWikiStat
 						if (articleRev.UserUniqueIdentifier == null)
 							continue;
 
-						User cur = null;
-						if (statisticsData.Users.ContainsKey(articleRev.UserUniqueIdentifier))
+						User cur = User.CreateFromDumpArticleRevision(articleRev);
+						if (statisticsData.Users.ContainsKey(cur.Name))
 						{
-							cur = statisticsData.Users[articleRev.UserUniqueIdentifier];
+							cur = statisticsData.Users[cur.Name];
 						}
 						else
 						{
-							cur = User.CreateFromDumpArticleRevision(articleRev);
 							cur.Id = articleRev.UserId;
-							statisticsData.Users.Add(articleRev.UserUniqueIdentifier, cur);
+							statisticsData.Users.Add(cur.Name, cur);
 							cur.AddRights(ugDump.GetUserRights(cur.Id));
 						}
 
@@ -1017,7 +1016,16 @@ namespace qczWikiStat
 
 					if (!u.IsBot)
 						tableContent.Append(userCounter + ". ");
-					tableContent.Append("|| {{user2|" + u.Name + "}}");
+
+					if (u.IsDeleted)
+					{
+						tableContent.Append($"|| <s>(Szerkesztőnév eltávolítva)</s>");
+					}
+					else
+					{
+						tableContent.Append("|| {{user2|" + u.Name + "}}");
+					}
+
 					if (showPrivilegesCheckBox.Checked)
 					{
 						string rAppend = string.Empty;
